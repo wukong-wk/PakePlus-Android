@@ -1,0 +1,250 @@
+window.addEventListener("DOMContentLoaded",()=>{const t=document.createElement("script");t.src="https://www.googletagmanager.com/gtag/js?id=G-W5GKHM0893",t.async=!0,document.head.appendChild(t);const n=document.createElement("script");n.textContent="window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-W5GKHM0893');",document.body.appendChild(n)});<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gpt中国站 · AI 梦境工坊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background: #000000; color: #f0f3fa; }
+        .glass-card { background: rgba(10, 10, 18, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(139, 92, 246, 0.35); box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1f1f2e; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 10px; }
+        .marquee { flex: 1; overflow: hidden; white-space: nowrap; background: #0b0b12; border-radius: 2rem; border: 1px solid #2d2d40; }
+        .marquee-content { display: inline-block; animation: marquee 22s linear infinite; padding-left: 100%; color: #c4b5fd; font-weight: 500; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        .chat-container { height: 480px; overflow-y: auto; background: #05050c; border-radius: 1.5rem; border: 1px solid #2a2a3a; }
+        .message { max-width: 80%; padding: 0.7rem 1.2rem; border-radius: 1.5rem; font-weight: 500; line-height: 1.4; }
+        .message.user { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; border-bottom-right-radius: 0.4rem; align-self: flex-end; }
+        .message.assistant { background: #11111c; color: #e2e8ff; border: 1px solid #4c1d95; align-self: flex-start; border-bottom-left-radius: 0.4rem; }
+        .quantity-selector { background: #0f0f18; border-radius: 2rem; border: 1px solid #5b21b6; }
+        .quantity-btn { background: #1e1e2c; color: white; font-weight: bold; transition: all 0.2s; }
+        .quantity-btn:hover { background: #8b5cf6; color: #000; }
+        .quantity-input { background: transparent; color: white; font-weight: 600; }
+        .tab-btn { transition: all 0.2s; font-weight: 500; }
+        .tab-active { color: #c4b5fd !important; border-bottom: 2px solid #a78bfa; background: rgba(139, 92, 246, 0.15); border-radius: 0.75rem 0.75rem 0 0; }
+        input, textarea, select { background: #0c0c15 !important; border: 1px solid #334155 !important; color: #f8fafc !important; border-radius: 1rem !important; transition: all 0.2s; }
+        input:focus, textarea:focus { border-color: #a78bfa !important; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4) !important; outline: none; }
+        input::placeholder, textarea::placeholder { color: #9ca3af !important; font-weight: 400; }
+        .btn-primary { background: linear-gradient(95deg, #6d28d9, #4338ca); color: white; font-weight: 600; transition: 0.2s; }
+        .btn-primary:hover { filter: brightness(1.1); transform: scale(0.98); }
+        .image-card { transition: transform 0.2s ease, box-shadow 0.2s; background: #0a0a10; border-radius: 1rem; overflow: hidden; border: 1px solid #2d2d44; }
+        .image-card:hover { transform: translateY(-6px); box-shadow: 0 20px 28px -10px black; border-color: #8b5cf6; }
+        .loader-ring { width: 56px; height: 56px; border: 3px solid rgba(139,92,246,0.2); border-top: 3px solid #c084fc; border-radius: 50%; animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        .history-item { background: #0f0f18; border: 1px solid #2d2d44; border-radius: 1rem; transition: 0.1s; }
+        .history-item:hover { background: #18182a; border-color: #8b5cf6; }
+        .upload-zone { border: 2px dashed #4c1d95; background: #07070e; transition: all 0.2s; }
+        .upload-zone.drag-over { border-color: #c084fc; background: #1e1b2f; }
+        .text-label { color: #c4b5fd; font-weight: 500; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- 顶部导航 -->
+    <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-purple-800/40 shadow-md">
+        <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-700 flex items-center justify-center shadow-lg shadow-purple-900/40">
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-purple-200 to-indigo-200 bg-clip-text text-transparent">Gpt中国站</h1>
+            </div>
+            <button id="openApiConfigBtn" class="bg-indigo-900/60 hover:bg-indigo-800/80 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold flex items-center gap-2 border border-indigo-500/50 text-indigo-200 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                ⚙️ API 接入
+            </button>
+        </div>
+    </header>
+
+    <!-- API 配置模态框 -->
+    <div id="apiConfigModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#0b0b14] rounded-2xl max-w-2xl w-full p-6 border border-purple-500/60 shadow-2xl">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-xl font-bold text-purple-300 flex items-center gap-2"><span>🔌</span> AI 服务接口配置</h3>
+                <button id="closeApiConfigBtn" class="text-gray-300 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div class="space-y-5 max-h-[60vh] overflow-y-auto pr-2">
+                <div class="glass-card p-4 rounded-xl space-y-3 border-purple-800/40">
+                    <label class="font-bold text-indigo-200 flex items-center gap-2">🖼️ 文生图 API <span class="text-xs text-gray-300">(OpenAI 风格)</span></label>
+                    <input type="text" id="txt2imgUrl" placeholder="https://api.openai.com/v1/images/generations" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                    <input type="text" id="txt2imgKey" placeholder="API Key (Bearer Token)" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                    <div class="text-xs text-gray-300">支持 DALL-E 3 或兼容接口，尺寸自动映射</div>
+                </div>
+                <div class="glass-card p-4 rounded-xl space-y-3">
+                    <label class="font-bold text-indigo-200">✏️ 图生图 / 编辑 API</label>
+                    <input type="text" id="img2imgUrl" placeholder="https://api.openai.com/v1/images/edits" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                    <input type="text" id="img2imgKey" placeholder="API Key (留空则沿用文生图Key)" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                </div>
+                <div class="glass-card p-4 rounded-xl space-y-3">
+                    <label class="font-bold text-indigo-200">💬 AI 对话 API</label>
+                    <input type="text" id="chatApiUrl" placeholder="https://api.openai.com/v1/chat/completions" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                    <input type="text" id="chatApiKey" placeholder="API Key" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                    <input type="text" id="chatModel" placeholder="模型 (gpt-3.5-turbo, deepseek-chat)" value="gpt-3.5-turbo" class="w-full bg-black/70 border border-gray-600 rounded-xl px-4 py-2 text-white">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button id="saveApiConfig" class="bg-purple-700 hover:bg-purple-600 px-6 py-2 rounded-full font-semibold text-white shadow transition">💾 保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-5 py-6">
+        <!-- 公告栏：固定联系开发者 -->
+        <div class="mb-6 flex flex-wrap items-center gap-3 glass-card p-2 rounded-full">
+            <div class="marquee rounded-full px-5 py-1.5">
+                <div class="marquee-content text-sm font-medium" id="announcementText">📢 遇到问题请联系开发者微信 Rc03158 · 提供AI接口配置支持 · 感谢使用 Gpt中国站</div>
+            </div>
+            <div class="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full">
+                <span class="text-xs font-semibold text-purple-200 whitespace-nowrap">📸 生成数量:</span>
+                <div class="quantity-selector">
+                    <div class="quantity-btn rounded-l-full w-8 h-8 flex items-center justify-center text-lg" id="decrementCount">−</div>
+                    <input type="number" id="generationCount" value="1" min="1" max="9" class="quantity-input w-12 text-center font-bold">
+                    <div class="quantity-btn rounded-r-full w-8 h-8 flex items-center justify-center text-lg" id="incrementCount">+</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="flex space-x-2 border-b border-gray-800 mb-6">
+            <button id="textToImageTab" class="tab-btn px-5 py-2.5 font-semibold rounded-t-xl text-gray-300 flex items-center gap-2">✨ 文生图</button>
+            <button id="imageToImageTab" class="tab-btn px-5 py-2.5 font-semibold rounded-t-xl text-gray-300 flex items-center gap-2">🎨 图生图</button>
+            <button id="chatTab" class="tab-btn px-5 py-2.5 font-semibold rounded-t-xl text-gray-300 flex items-center gap-2">💬 AI对话</button>
+            <button id="historyTab" class="tab-btn px-5 py-2.5 font-semibold rounded-t-xl text-gray-300 flex items-center gap-2">📜 历史仓库</button>
+        </div>
+
+        <!-- 文生图面板 -->
+        <div id="textToImagePanel" class="space-y-5 glass-card rounded-2xl p-6">
+            <textarea id="textPrompt" rows="3" placeholder="🌠 描述你的画面：赛博朋克，霓虹雨夜，4k极致，光影反射" class="w-full bg-black/60 border border-gray-700 rounded-xl px-5 py-3 text-white text-base"></textarea>
+            <div><label class="block text-label mb-2">📐 画幅比例</label>
+                <div class="flex flex-wrap gap-3">
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white cursor-pointer"><input type="radio" name="textRatio" value="1:1" checked> 1:1</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="textRatio" value="16:9"> 16:9</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="textRatio" value="9:16"> 9:16</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="textRatio" value="4:3"> 4:3</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="textRatio" value="3:4"> 3:4</label>
+                </div>
+            </div>
+            <button id="generateTextBtn" class="btn-primary w-full py-3 rounded-xl text-white text-lg flex items-center justify-center gap-2">✨ 灵感迸发 · 生成图片</button>
+        </div>
+
+        <!-- 图生图面板 -->
+        <div id="imageToImagePanel" class="hidden space-y-5 glass-card rounded-2xl p-6">
+            <div class="upload-zone rounded-xl p-6 text-center cursor-pointer transition" id="dropZone">
+                <input type="file" id="imageUpload" accept="image/jpeg,image/png,image/webp" class="hidden">
+                <svg class="h-12 w-12 mx-auto text-purple-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                <p class="text-white font-medium">拖拽或点击上传参考图片</p>
+                <p class="text-xs text-gray-300 mt-1">支持 JPG / PNG / WEBP</p>
+            </div>
+            <div id="uploadedImageContainer" class="hidden"><div class="relative inline-block"><img id="uploadedImagePreview" class="max-h-40 rounded-xl border-2 border-purple-500"><button id="removeImageBtn" class="absolute -top-2 -right-2 bg-red-600 rounded-full p-1 shadow"><svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
+            <textarea id="imagePrompt" rows="3" placeholder="🎭 修改指令：例如“让背景变成霓虹都市，加上发光纹理”" class="w-full bg-black/60 border border-gray-700 rounded-xl px-5 py-3 text-white"></textarea>
+            <div class="flex gap-3 flex-wrap"><button id="ecommerceBtn" class="bg-indigo-800/70 hover:bg-indigo-700 px-4 py-2 rounded-full text-white text-sm font-medium">🛍️ 一键电商详情图</button><button id="posterBtn" class="bg-purple-800/70 hover:bg-purple-700 px-4 py-2 rounded-full text-white text-sm">🎯 产品海报</button></div>
+            <div><label class="block text-label mb-2">画幅比例</label>
+                <div class="flex flex-wrap gap-3">
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="imageRatio" value="1:1" checked> 1:1</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="imageRatio" value="16:9"> 16:9</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="imageRatio" value="9:16"> 9:16</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="imageRatio" value="4:3"> 4:3</label>
+                    <label class="flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-white"><input type="radio" name="imageRatio" value="3:4"> 3:4</label>
+                </div>
+            </div>
+            <button id="generateImageBtn" class="bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:opacity-90 w-full py-3 rounded-xl text-white font-semibold text-lg">🎆 生成编辑图片</button>
+        </div>
+
+        <!-- AI对话面板 -->
+        <div id="chatPanel" class="hidden flex flex-col glass-card rounded-2xl p-5">
+            <div class="chat-container p-4" id="chatMessagesContainer"><div class="text-center text-gray-300 py-10">🤖 请先配置对话API，即可畅聊</div></div>
+            <div class="chat-input-area mt-4 flex gap-3 bg-[#0b0b12] rounded-full p-1.5 border border-gray-700">
+                <input type="text" id="chatInput" class="flex-1 bg-transparent border-none rounded-full px-4 py-2 text-white placeholder-gray-400 outline-none" placeholder="输入消息...">
+                <button id="sendChatBtn" class="bg-purple-600 hover:bg-purple-500 rounded-full px-6 py-2 font-semibold text-white transition">发送</button>
+            </div>
+        </div>
+
+        <!-- 历史记录面板 本地存储 -->
+        <div id="historyPanel" class="hidden space-y-4 glass-card rounded-2xl p-6">
+            <div class="flex justify-between items-center"><h2 class="text-xl font-bold text-purple-200">💾 本地创作史</h2><button id="clearLocalHistory" class="text-xs bg-red-900/60 hover:bg-red-700 px-3 py-1.5 rounded-full text-white">清空记录</button></div>
+            <div id="historyList" class="space-y-3 max-h-[500px] overflow-y-auto"></div>
+        </div>
+
+        <!-- 最新作品展示区 -->
+        <div id="resultsContainer" class="mt-10">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-white"><span class="w-1 h-6 bg-purple-500 rounded-full"></span> 最新生成艺术</h2>
+            <div id="imagesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="col-span-full text-center text-gray-300 py-12 glass-card rounded-2xl">⚡ 请先配置 API 接口，开始你的创作之旅</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 图片查看器 -->
+    <div id="imageViewer" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"><button id="closeViewer" class="absolute top-5 right-8 text-white text-4xl">&times;</button><img id="viewerImg" class="max-w-full max-h-full rounded-xl shadow-2xl"></div>
+
+    <script>
+        // ---------- 无积分、无注册、纯本地 + API配置驱动 ----------
+        let apiConfig = { txt2imgUrl: '', txt2imgKey: '', img2imgUrl: '', img2imgKey: '', chatApiUrl: '', chatApiKey: '', chatModel: 'gpt-3.5-turbo' };
+        let localHistory = [];
+        let uploadedImageFile = null;
+
+        // DOM 绑定
+        const openApiBtn = document.getElementById('openApiConfigBtn'), apiModal = document.getElementById('apiConfigModal'), closeApiBtn = document.getElementById('closeApiConfigBtn'), saveApiBtn = document.getElementById('saveApiConfig');
+        const txt2imgUrlInp = document.getElementById('txt2imgUrl'), txt2imgKeyInp = document.getElementById('txt2imgKey'), img2imgUrlInp = document.getElementById('img2imgUrl'), img2imgKeyInp = document.getElementById('img2imgKey');
+        const chatApiUrlInp = document.getElementById('chatApiUrl'), chatApiKeyInp = document.getElementById('chatApiKey'), chatModelInp = document.getElementById('chatModel');
+        const generateTextBtn = document.getElementById('generateTextBtn'), generateImageBtn = document.getElementById('generateImageBtn'), textPrompt = document.getElementById('textPrompt'), imagePrompt = document.getElementById('imagePrompt');
+        const imagesGrid = document.getElementById('imagesGrid'), genCountInput = document.getElementById('generationCount');
+        const decrementBtn = document.getElementById('decrementCount'), incrementBtn = document.getElementById('incrementCount');
+        const ecommerceBtn = document.getElementById('ecommerceBtn'), posterBtn = document.getElementById('posterBtn');
+        const textTab = document.getElementById('textToImageTab'), imageTab = document.getElementById('imageToImageTab'), chatTab = document.getElementById('chatTab'), historyTab = document.getElementById('historyTab');
+        const textPanel = document.getElementById('textToImagePanel'), imagePanel = document.getElementById('imageToImagePanel'), chatPanel = document.getElementById('chatPanel'), historyPanel = document.getElementById('historyPanel'), resultsContainer = document.getElementById('resultsContainer');
+        const historyListDiv = document.getElementById('historyList'), clearHistoryBtn = document.getElementById('clearLocalHistory');
+        const chatMessages = document.getElementById('chatMessagesContainer'), chatInput = document.getElementById('chatInput'), sendChatBtn = document.getElementById('sendChatBtn');
+        const dropZone = document.getElementById('dropZone'), imageUpload = document.getElementById('imageUpload'), uploadedContainer = document.getElementById('uploadedImageContainer'), uploadedPreview = document.getElementById('uploadedImagePreview'), removeImageBtn = document.getElementById('removeImageBtn');
+        const viewer = document.getElementById('imageViewer'), viewerImg = document.getElementById('viewerImg'), closeViewer = document.getElementById('closeViewer');
+
+        // 辅助函数
+        function loadApiConfig() { const saved = localStorage.getItem('ai_api_config'); if(saved) { try{ apiConfig = JSON.parse(saved); txt2imgUrlInp.value = apiConfig.txt2imgUrl||''; txt2imgKeyInp.value = apiConfig.txt2imgKey||''; img2imgUrlInp.value = apiConfig.img2imgUrl||''; img2imgKeyInp.value = apiConfig.img2imgKey||''; chatApiUrlInp.value = apiConfig.chatApiUrl||''; chatApiKeyInp.value = apiConfig.chatApiKey||''; chatModelInp.value = apiConfig.chatModel||'gpt-3.5-turbo'; }catch(e){} } }
+        function saveApiConfigToLocal() { apiConfig = { txt2imgUrl: txt2imgUrlInp.value, txt2imgKey: txt2imgKeyInp.value, img2imgUrl: img2imgUrlInp.value, img2imgKey: img2imgKeyInp.value, chatApiUrl: chatApiUrlInp.value, chatApiKey: chatApiKeyInp.value, chatModel: chatModelInp.value }; localStorage.setItem('ai_api_config', JSON.stringify(apiConfig)); apiModal.classList.add('hidden'); alert('✅ API配置已保存'); }
+        function loadLocalHistory() { const stored = localStorage.getItem('local_gen_history'); if(stored) localHistory = JSON.parse(stored); else localHistory = []; renderHistory(); }
+        function addToHistory(type, prompt, imageData, size) { localHistory.unshift({ id: Date.now(), type, prompt, image: imageData, size, time: new Date().toLocaleString() }); if(localHistory.length > 60) localHistory.pop(); localStorage.setItem('local_gen_history', JSON.stringify(localHistory)); renderHistory(); }
+        function renderHistory() { if(!historyListDiv) return; if(!localHistory.length) { historyListDiv.innerHTML = '<div class="text-center text-gray-400 py-6">✨ 暂无作品，快去生成你的第一张图</div>'; return; } historyListDiv.innerHTML = localHistory.map(h => `<div class="history-item p-3 flex flex-wrap justify-between items-center gap-2"><div class="text-sm font-medium text-white truncate max-w-[220px]">${escapeHtml(h.prompt?.slice(0,65))}</div><div class="text-xs text-gray-300">${h.time}</div><button class="view-local-img bg-purple-800/50 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded-full" data-img="${h.image}">🔍 预览</button></div>`).join(''); document.querySelectorAll('.view-local-img').forEach(btn => btn.addEventListener('click', (e) => { const src = btn.getAttribute('data-img'); if(src) openViewer(src); })); }
+        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+        function ratioToSize(ratio) { const map = { '1:1':'1024x1024','16:9':'1792x1024','9:16':'1024x1792','4:3':'1152x864','3:4':'864x1152' }; return map[ratio] || '1024x1024'; }
+        function getSelectedRatio(isText=true) { let val = '1:1'; document.querySelectorAll(isText ? 'input[name="textRatio"]' : 'input[name="imageRatio"]').forEach(r => { if(r.checked) val = r.value; }); return val; }
+        function openViewer(src) { viewerImg.src = src; viewer.classList.remove('hidden'); }
+        function createImageCard(src) { const div = document.createElement('div'); div.className = 'image-card relative aspect-square rounded-xl overflow-hidden group cursor-pointer'; const img = document.createElement('img'); img.src = src; img.className = 'w-full h-full object-cover'; img.onclick = () => openViewer(src); const overlay = document.createElement('div'); overlay.className = 'absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-3'; overlay.innerHTML = `<button class="bg-white/20 p-2 rounded-full text-white text-sm">🔍 放大</button><button class="bg-white/20 p-2 rounded-full text-white text-sm download-btn">⬇️ 保存</button>`; overlay.querySelector('.download-btn')?.addEventListener('click',(e)=>{ e.stopPropagation(); const a=document.createElement('a');a.href=src;a.download=`dream_${Date.now()}.png`;a.click();}); div.appendChild(img); div.appendChild(overlay); return div; }
+        
+        // 文生图API调用
+        async function callTextToImage(prompt, size, n=1) { if(!apiConfig.txt2imgUrl || !apiConfig.txt2imgKey) throw new Error('请先配置文生图API及密钥'); const resp = await fetch(apiConfig.txt2imgUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiConfig.txt2imgKey}` }, body: JSON.stringify({ model: "dall-e-3", prompt, n, size }) }); if(!resp.ok) { const err = await resp.text(); throw new Error(`API错误: ${resp.status}`); } const data = await resp.json(); if(data.data && data.data[0]) { let img = data.data[0].url || data.data[0].b64_json; if(img && !img.startsWith('data:') && !img.startsWith('http')) img = `data:image/png;base64,${img}`; return img; } throw new Error('返回图片无效'); }
+        async function callImageToImage(imageFile, prompt, size) { if(apiConfig.img2imgUrl && apiConfig.img2imgKey) { const fd = new FormData(); fd.append('image', imageFile); fd.append('prompt', prompt); fd.append('size', size); fd.append('n', '1'); const resp = await fetch(apiConfig.img2imgUrl, { method: 'POST', headers: { 'Authorization': `Bearer ${apiConfig.img2imgKey}` }, body: fd }); if(!resp.ok) throw new Error('图生图API失败'); const data = await resp.json(); let img = data.data?.[0]?.url || data.data?.[0]?.b64_json; if(img && !img.startsWith('data:')) img = `data:image/png;base64,${img}`; return img; } else { if(!apiConfig.txt2imgUrl) throw new Error('未配置文生图API'); return callTextToImage(`基于参考图的风格: ${prompt}`, size, 1); } }
+        async function callChat(messages) { if(!apiConfig.chatApiUrl || !apiConfig.chatApiKey) throw new Error('请配置对话API'); const resp = await fetch(apiConfig.chatApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiConfig.chatApiKey}` }, body: JSON.stringify({ model: apiConfig.chatModel, messages, stream: false }) }); if(!resp.ok) throw new Error('对话请求失败'); const data = await resp.json(); return data.choices[0].message.content; }
+
+        async function generateText() { const prompt = textPrompt.value.trim(); if(!prompt) return alert('请输入描述词'); const count = Math.min(9, parseInt(genCountInput.value)||1); const size = ratioToSize(getSelectedRatio(true)); imagesGrid.innerHTML = `<div class="col-span-full flex justify-center py-12"><div class="loader-ring"></div><span class="ml-4 text-purple-300 font-medium">AI 正在绘制梦境中...</span></div>`; try { let results=[]; for(let i=0;i<count;i++) { const imgData = await callTextToImage(prompt, size, 1); results.push(imgData); addToHistory('文生图', prompt, imgData, size); } imagesGrid.innerHTML = ''; results.forEach(img => imagesGrid.appendChild(createImageCard(img))); } catch(err) { imagesGrid.innerHTML = `<div class="col-span-full text-center text-red-300 p-6 glass-card">❌ ${err.message}</div>`; } }
+        async function generateImageToImage(customPrompt=null) { if(!uploadedImageFile) return alert('请先上传图片'); const prompt = customPrompt !== null ? customPrompt : imagePrompt.value.trim(); if(!prompt) return alert('请输入修改描述'); const size = ratioToSize(getSelectedRatio(false)); imagesGrid.innerHTML = `<div class="col-span-full flex justify-center py-12"><div class="loader-ring"></div><span class="ml-4 text-purple-300">融合创意中...</span></div>`; try { const imgData = await callImageToImage(uploadedImageFile, prompt, size); imagesGrid.innerHTML = ''; imagesGrid.appendChild(createImageCard(imgData)); addToHistory('图生图', prompt, imgData, size); } catch(err) { imagesGrid.innerHTML = `<div class="col-span-full text-red-300 p-6">编辑失败: ${err.message}</div>`; } }
+        
+        let currentMessages = [];
+        async function sendMessage() { const msg = chatInput.value.trim(); if(!msg) return; if(!apiConfig.chatApiUrl) return alert('请先配置对话API'); const userDiv = document.createElement('div'); userDiv.className = 'message user'; userDiv.textContent = msg; chatMessages.appendChild(userDiv); chatMessages.scrollTop = chatMessages.scrollHeight; chatInput.value = ''; const thinking = document.createElement('div'); thinking.className = 'message assistant'; thinking.textContent = '🤔 思考中...'; chatMessages.appendChild(thinking); try { currentMessages.push({ role: 'user', content: msg }); const reply = await callChat(currentMessages); currentMessages.push({ role: 'assistant', content: reply }); thinking.remove(); const botDiv = document.createElement('div'); botDiv.className = 'message assistant'; botDiv.textContent = reply; chatMessages.appendChild(botDiv); chatMessages.scrollTop = chatMessages.scrollHeight; } catch(e) { thinking.textContent = `⚠️ ${e.message}`; thinking.style.color='#f9a8d4'; } }
+
+        function switchTab(active) { [textTab,imageTab,chatTab,historyTab].forEach(t=>t.classList.remove('tab-active')); textPanel.classList.add('hidden'); imagePanel.classList.add('hidden'); chatPanel.classList.add('hidden'); historyPanel.classList.add('hidden'); resultsContainer.classList.remove('hidden'); if(active==='text') { textTab.classList.add('tab-active'); textPanel.classList.remove('hidden'); } else if(active==='image') { imageTab.classList.add('tab-active'); imagePanel.classList.remove('hidden'); } else if(active==='chat') { chatTab.classList.add('tab-active'); chatPanel.classList.remove('hidden'); resultsContainer.classList.add('hidden'); if(apiConfig.chatApiUrl && chatMessages.children.length<=1) chatMessages.innerHTML='<div class="text-center text-gray-300 py-10">✨ 开始对话吧 ✨</div>'; } else if(active==='history') { historyTab.classList.add('tab-active'); historyPanel.classList.remove('hidden'); resultsContainer.classList.add('hidden'); renderHistory(); } }
+        
+        textTab.onclick = () => switchTab('text'); imageTab.onclick = () => switchTab('image'); chatTab.onclick = () => switchTab('chat'); historyTab.onclick = () => switchTab('history');
+        generateTextBtn.onclick = generateText; generateImageBtn.onclick = () => generateImageToImage(null);
+        ecommerceBtn.onclick = () => generateImageToImage('生成高级电商详情图，产品突出，专业商业摄影，干净背景'); posterBtn.onclick = () => generateImageToImage('创意产品海报，潮流视觉设计，吸引眼球');
+        decrementBtn.onclick = () => { let v = parseInt(genCountInput.value)-1; if(v<1) v=1; genCountInput.value=v; };
+        incrementBtn.onclick = () => { let v = parseInt(genCountInput.value)+1; if(v>9) v=9; genCountInput.value=v; };
+        openApiBtn.onclick = () => apiModal.classList.remove('hidden'); closeApiBtn.onclick = () => apiModal.classList.add('hidden'); saveApiBtn.onclick = saveApiConfigToLocal;
+        dropZone.onclick = () => imageUpload.click(); imageUpload.onchange = (e) => { if(e.target.files[0]) { uploadedImageFile = e.target.files[0]; const reader = new FileReader(); reader.onload = (ev) => { uploadedPreview.src = ev.target.result; uploadedContainer.classList.remove('hidden'); dropZone.classList.add('hidden'); }; reader.readAsDataURL(uploadedImageFile); } };
+        removeImageBtn.onclick = () => { uploadedImageFile = null; uploadedContainer.classList.add('hidden'); dropZone.classList.remove('hidden'); };
+        dropZone.ondragover = e => e.preventDefault(); dropZone.ondrop = e => { e.preventDefault(); if(e.dataTransfer.files[0]) imageUpload.files = e.dataTransfer.files; imageUpload.dispatchEvent(new Event('change')); };
+        closeViewer.onclick = () => viewer.classList.add('hidden'); viewer.onclick = (e) => { if(e.target === viewer) viewer.classList.add('hidden'); };
+        sendChatBtn.onclick = sendMessage; chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+        clearHistoryBtn.onclick = () => { if(confirm('清空所有本地历史记录？')) { localHistory = []; localStorage.setItem('local_gen_history', '[]'); renderHistory(); } };
+        loadApiConfig(); loadLocalHistory(); switchTab('text');
+        // 固定公告内容
+        document.getElementById('announcementText').innerText = '📢 遇到问题请联系开发者微信 Rc03158 · 提供AI接口配置支持 · 感谢使用 Gpt中国站';
+    </script>
+</body>
+</html>
